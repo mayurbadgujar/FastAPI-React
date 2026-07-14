@@ -3,4 +3,4 @@ Fast API with SQL Alchemy
 Authentication, Login, Register, Doctors API and work in progress to add more component.
 
 FrontEnd React App.
-Login, Register, Doctors Page (WIP).
+Login, Register, Doctors Page (WIP). with AG Grid
