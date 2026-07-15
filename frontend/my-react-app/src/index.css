@@ -71,7 +71,6 @@ html[data-theme="dark"],
 .theme-navbar .dropdown-menu,
 .theme-navbar .dropdown-item,
 .theme-navbar .navbar-toggler {
-  background: var(--bg) !important;
   color: var(--text-h) !important;
 }
 

@@ -14,4 +14,22 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+let redirectingToLogin = false;
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.status === 401 && !redirectingToLogin) {
+      redirectingToLogin = true;
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      if (window.location.pathname !== "/login") {
+        window.location.replace("/login");
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default api;

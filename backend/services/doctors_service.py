@@ -36,7 +36,6 @@ async def get_doctor_by_id(doctor_id: int):
 
 async def get_all_doctors():
     query = doctors.select().where(doctors.c.is_active == True)
-    print("Executing query:", query)  # Debugging line to print the query
     all_doctors = await database.fetch_all(query)
     return all_doctors
 

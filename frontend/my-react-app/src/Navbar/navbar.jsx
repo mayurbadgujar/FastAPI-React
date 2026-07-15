@@ -21,6 +21,12 @@ export default function NavigationBar() {
   }, [theme]);
 
   useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+      return;
+    }
+
     loadUser();
   }, []);
 
@@ -35,6 +41,7 @@ export default function NavigationBar() {
     try {
       const res = await api.get("/auth/current_user");
       setUser(res.data);
+      localStorage.setItem("user", JSON.stringify(res.data));
     } catch (error) {
       if (error?.response?.status === 401) {
         localStorage.removeItem("token");

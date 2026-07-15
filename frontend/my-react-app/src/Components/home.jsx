@@ -9,32 +9,6 @@ export default function Home() {
   const [response, setResponse] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    loadCurrentUser();
-  }, []);
-
-  const loadCurrentUser = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const res = await api.get("/auth/current_user");
-      setUser(res.data);
-    } catch (error) {
-      setUser(null);
-      if (error?.response?.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/login");
-        return;
-      }
-      console.error("Failed to load current user:", error);
-    }
-  };
-
   const callEndpoint = async (method, url, data = null, config = {}) => {
     try {
       const res = await api.request({ method, url, data, ...config });
@@ -50,8 +24,7 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
-    <Doctors/>
+      <Doctors />
     </>
   );
 }

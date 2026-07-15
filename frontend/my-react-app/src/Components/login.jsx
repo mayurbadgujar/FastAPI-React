@@ -39,31 +39,33 @@ export default function Login() {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: 400 }}>
-      <h3>Login</h3>
+    <div className="page-container">
+      <div className="container mt-5" style={{ maxWidth: 400 }}>
+        <h3>Login</h3>
 
-      <input
-        className="form-control mb-3"
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
+        <input
+          className="form-control mb-3"
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
 
-      <input
-        className="form-control mb-3"
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+        <input
+          className="form-control mb-3"
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-      <button className="btn btn-primary w-100" onClick={login}>
-        Login
-      </button>
-      <Link to="/auth/register" className="btn btn-link w-100 mt-2">
-        Don't have an account? Register
-      </Link>
+        <button className="btn btn-primary w-100" onClick={login}>
+          Login
+        </button>
+        <Link to="/auth/register" className="btn btn-link w-100 mt-2">
+          Don't have an account? Register
+        </Link>
+      </div>
     </div>
   );
 }
