@@ -36,15 +36,18 @@ async def get_patient(phone: Optional[str] =None,
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found with the provided name or phone number") 
 
+@patient_router.delete("/{id}", summary="delete patient")
+async def delete(id: int, user=Depends(get_current_user)):
+    data = await delete_patient(id)
+    if data is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Patient id not found"
+        )
+    return data
 
-@patient_router.delete("/{id}",summary="delete patient")
-async def delete(id:int, user=Depends(get_current_user)):
-    data= delete_patient(id)
-    if data:
-        return status.HTTP_200_OK
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail= "Patient id not found")
 
 @patient_router.put("/{id}", summary="update patient")
 async def update(id:int, data: PatientUpdate, user=Depends(get_current_user)):
-    await update_patient(id,data)
-    return status.HTTP_204_NO_CONTENT
+    return await update_patient(id,data)
+    

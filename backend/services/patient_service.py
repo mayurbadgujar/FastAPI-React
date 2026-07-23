@@ -24,7 +24,7 @@ async def create_patient(patient_data):
         is_active=True 
     )
     await database.execute(query)
-    return {"message":"patient created successfully!"}
+    return {"status": "success","message":"patient created successfully!"}
 
 async def get_patients():
     query = patient.select().where(patient.c.is_active==True)
@@ -52,14 +52,18 @@ async def update_patient(id:int ,patient_data):
         phone=patient_data.phone,
         updateddate= datetime.now(),
         sex=patient_data.sex,
-        isactive=patient_data.is_active
+        is_active=patient_data.is_active
     )
     await database.execute(query)
-    return {"message":"Patient details updated!"}
+    return {"status": "success","message":"Patient details updated!"}
 
 async def delete_patient(id:int):
-    query = patient.update().where(patient.c.id==id)
-    if query is None:
+    query = patient.select().where(patient.c.id==id)
+    print(query)
+    exising= await database.fetch_one(query)
+
+    if not exising:
         return {"error":"not found"}
+    query = patient.update().where(patient.c.id == id).values(is_active=False)
     await database.execute(query)
-    return {"message":"Patient deleted!"}
+    return {"status": "success","message":"Patient deleted!"}

@@ -9,6 +9,7 @@ class Patient(BaseModel):
     address:str 
     sex:str
     remark:str
+    is_active:bool
 
 class PatientCreate(Patient):
     createddate: datetime = datetime.now()   # required for create
