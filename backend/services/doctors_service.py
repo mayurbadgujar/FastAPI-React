@@ -22,7 +22,7 @@ async def create_doctor(doctor_data):
         is_active=True
     )
     await database.execute(query)
-    return {"message": "Doctor created successfully"}
+    return {"message": "Doctor created successfully!"}
 
 async def get_doctor_by_email_or_phone(email: str, phone: str):
     query = doctors.select().where((doctors.c.email == email) | (doctors.c.phone == phone))

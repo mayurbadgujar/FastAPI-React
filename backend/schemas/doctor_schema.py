@@ -5,7 +5,7 @@ class DoctorCreate(BaseModel):
     lastname: str
     date_of_birth: str
     email: str
-    phone: int
+    phone: str
     degree: str
     specialization: str
     address: str
@@ -16,7 +16,7 @@ class DoctorUpdate(BaseModel):
     lastname: str
     date_of_birth: str
     email: str
-    phone: int
+    phone: str
     degree: str
     specialization: str
     address: str

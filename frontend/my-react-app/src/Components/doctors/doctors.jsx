@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
-import api from "../api";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import { Button } from "react-bootstrap";
+import AddDoctorModal from "./adddoctormodel.jsx";
+import api from "../../api.jsx";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Doctors() {
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   const defaultColDef = useMemo(
     () => ({
@@ -145,14 +148,20 @@ export default function Doctors() {
     params.api.applyTransaction({ update: [updatedRow] });
     try {
       await api.put(`/doctors/${updatedRow.id}`, updatedRow);
-      console.log("Doctor updated");
+      alert("Doctor updated successfully");
     } catch (error) {
-      console.error("Failed to update doctor", error);
+      alert("Failed to update doctor");
     }
   };
 
   return (
     <div className="page-container">
+      <div className="d-flex justify-content-end">
+        <Button onClick={() => setShowModal(true)}>
+          <i className="bi bi-plus-circle me-2"></i>
+          Add Doctor
+        </Button>
+      </div>
       <div
         className="ag-theme-quartz"
         style={{
@@ -173,6 +182,11 @@ export default function Doctors() {
           onCellValueChanged={onCellValueChanged}
         />
       </div>
+      <AddDoctorModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onSuccess={loadDoctors}
+      />
     </div>
   );
 }

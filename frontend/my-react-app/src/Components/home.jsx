@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Navbar/navbar.jsx";
 import api from "../api";
-import Doctors from "./doctors.jsx";
+import Doctors from "./doctors/doctors.jsx";
 
 export default function Home() {
   const [user, setUser] = useState(null);

@@ -9,7 +9,7 @@ doctors = Table(
     Column("lastname", String, nullable=False),
     Column("date_of_birth", DateTime, nullable=False),
     Column("email", String(100), nullable=False, unique=True),
-    Column("phone", Integer, nullable=False, unique=True, max_length=10),
+    Column("phone", String(10), nullable=False, unique=True),
     Column("degree", String(100), nullable=False),
     Column("completion_date", DateTime, nullable=False),
     Column("specialization", String(100), nullable=False),

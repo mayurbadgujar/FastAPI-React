@@ -12,13 +12,7 @@ async def create(doctor_data: DoctorCreate, current_user=Depends(get_current_use
 
 @doctors_router.get("/all", summary="Get all doctors")
 async def get_all(current_user=Depends(get_current_user)):
-    doctors = await get_all_doctors()
-    if doctors is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No doctors found"
-        )
-    return doctors
+    return await get_all_doctors()
 
 @doctors_router.get("/{doctor_id}", summary="Get doctor by ID")
 async def get_by_id(doctor_id: int, current_user=Depends(get_current_user)):
