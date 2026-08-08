@@ -12,7 +12,9 @@ export default function NavigationBar() {
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem("theme");
     if (saved) return saved;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   });
 
   useEffect(() => {
@@ -66,21 +68,46 @@ export default function NavigationBar() {
   };
 
   return (
-    <Navbar bg={theme === "light" ? "light" : "dark"} variant={theme === "light" ? "light" : "dark"} expand="lg" className="theme-navbar">
+    <Navbar
+      bg={theme === "light" ? "light" : "dark"}
+      variant={theme === "light" ? "light" : "dark"}
+      expand="lg"
+      className="theme-navbar"
+    >
       <Container>
-        <Navbar.Brand as={Link} to="/">Cureveda</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/">
+          Cureveda
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/">Home</Nav.Link>
-            <Nav.Link as={Link} to="/doctors">Doctors</Nav.Link>
-            <Nav.Link as={Link} to="/about">About</Nav.Link>
-            <Nav.Link as={Link} to="/contact">Contact</Nav.Link>
+            <Nav.Link as={Link} to="/">
+              Home
+            </Nav.Link>
+            <Nav.Link as={Link} to="/patients">
+              Patients
+            </Nav.Link>
+            <Nav.Link as={Link} to="/doctors">
+              Doctors
+            </Nav.Link>
+            <Nav.Link as={Link} to="/about">
+              About
+            </Nav.Link>
+            <Nav.Link as={Link} to="/contact">
+              Contact
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
         <Nav className="ms-auto align-items-center">
-          <Nav.Link className="theme-toggle-btn" onClick={toggleTheme} role="button" aria-label="Toggle theme">
-            <i className={`bi ${theme === "light" ? "bi-moon-stars-fill" : "bi-sun-fill"} fs-4`}></i>
+          <Nav.Link
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            role="button"
+            aria-label="Toggle theme"
+          >
+            <i
+              className={`bi ${theme === "light" ? "bi-moon-stars-fill" : "bi-sun-fill"} fs-4`}
+            ></i>
           </Nav.Link>
           <NavDropdown
             title={

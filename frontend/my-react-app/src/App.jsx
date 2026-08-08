@@ -3,6 +3,7 @@ import Login from "./Components/login.jsx";
 import Register from "./Components/register.jsx";
 import Home from "./Components/home.jsx";
 import Doctor from "./Components/doctors/doctors.jsx";
+import Patients from "./Components/patient/patients.jsx";
 import NavigationBar from "./Navbar/navbar.jsx";
 import About from "./Components/about.jsx";
 import Contact from "./Components/contact.jsx";
@@ -23,6 +24,7 @@ function App() {
           element={token ? <Home /> : <Navigate to="/login" replace />}
         />
         <Route path="/doctors" element={<Doctor />} />
+        <Route path="/patients" element={<Patients />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>

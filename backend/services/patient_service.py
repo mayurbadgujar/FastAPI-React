@@ -20,6 +20,7 @@ async def create_patient(patient_data):
         address=patient_data.address,
         sex=patient_data.sex,
         phone=patient_data.phone,
+        remark=patient_data.remark,
         createddate=datetime.now(),
         is_active=True 
     )
