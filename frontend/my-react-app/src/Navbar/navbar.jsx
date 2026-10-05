@@ -2,103 +2,52 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import Container from "react-bootstrap/Container";
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import api from "../api";
+import Badge from "react-bootstrap/Badge";
+import { Link, NavLink } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
+import { ROLE_LABELS } from "../constants/roles";
 
 export default function NavigationBar() {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved) return saved;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-  });
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-      return;
-    }
-
-    loadUser();
-  }, []);
-
-  const loadUser = async () => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      setUser(null);
-      return;
-    }
-
-    try {
-      const res = await api.get("/auth/current_user");
-      setUser(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data));
-    } catch (error) {
-      if (error?.response?.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        setUser(null);
-        navigate("/login");
-        return;
-      }
-
-      console.error(error);
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
-
-  const toggleTheme = () => {
-    setTheme((current) => (current === "light" ? "dark" : "light"));
-  };
+  const { user, logout, permissions } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <Navbar
       bg={theme === "light" ? "light" : "dark"}
       variant={theme === "light" ? "light" : "dark"}
       expand="lg"
-      className="theme-navbar"
+      className="theme-navbar app-navbar"
     >
-      <Container>
+      <Container fluid className="app-container">
         <Navbar.Brand as={Link} to="/">
           Cureveda
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Toggle aria-controls="main-navbar" />
+        <Navbar.Collapse id="main-navbar">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/">
+            <Nav.Link as={NavLink} to="/" end>
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to="/patients">
-              Patients
-            </Nav.Link>
-            <Nav.Link as={Link} to="/doctors">
-              Doctors
-            </Nav.Link>
-            <Nav.Link as={Link} to="/about">
+            {permissions.canViewPatients && (
+              <Nav.Link as={NavLink} to="/patients">
+                Patients
+              </Nav.Link>
+            )}
+            {permissions.canViewDoctors && (
+              <Nav.Link as={NavLink} to="/doctors">
+                Doctors
+              </Nav.Link>
+            )}
+            <Nav.Link as={NavLink} to="/about">
               About
             </Nav.Link>
-            <Nav.Link as={Link} to="/contact">
+            <Nav.Link as={NavLink} to="/contact">
               Contact
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
-        <Nav className="ms-auto align-items-center">
+        <Nav className="ms-auto align-items-center gap-1">
           <Nav.Link
             className="theme-toggle-btn"
             onClick={toggleTheme}
@@ -106,17 +55,26 @@ export default function NavigationBar() {
             aria-label="Toggle theme"
           >
             <i
-              className={`bi ${theme === "light" ? "bi-moon-stars-fill" : "bi-sun-fill"} fs-4`}
-            ></i>
+              className={`bi ${theme === "light" ? "bi-moon-stars-fill" : "bi-sun-fill"} fs-5`}
+            />
           </Nav.Link>
           <NavDropdown
             title={
-              <span>
-                <i className="bi bi-person-circle fs-4"></i>
-                {user && <span className="ms-2">{user.username}</span>}
+              <span className="d-inline-flex align-items-center gap-2">
+                <i className="bi bi-person-circle fs-5" />
+                {user?.username}
               </span>
             }
+            align="end"
           >
+            {user?.role && (
+              <NavDropdown.ItemText>
+                <Badge bg="secondary" className="role-badge">
+                  {ROLE_LABELS[user.role] ?? user.role}
+                </Badge>
+              </NavDropdown.ItemText>
+            )}
+            <NavDropdown.Divider />
             <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
           </NavDropdown>
         </Nav>

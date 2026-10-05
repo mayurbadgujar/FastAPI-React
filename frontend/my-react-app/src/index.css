@@ -100,42 +100,238 @@ html[data-theme="dark"],
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
+  width: 100%;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
 
-h1,
-h2 {
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.app-container {
+  max-width: 1200px;
+}
+
+.page-container {
+  padding: 1.5rem 1.25rem 2rem;
+  text-align: left;
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.page-header-actions {
+  flex-shrink: 0;
+}
+
+.btn-accent {
+  background: var(--accent) !important;
+  border-color: var(--accent-border) !important;
+  color: #fff !important;
+}
+
+.btn-accent:hover,
+.btn-accent:focus {
+  filter: brightness(1.05);
+  color: #fff !important;
+}
+
+.auth-layout {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background:
+    radial-gradient(circle at top right, var(--accent-bg), transparent 55%),
+    var(--bg);
+}
+
+.auth-layout-toolbar {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.auth-brand {
+  font-weight: 600;
+  color: var(--text-h);
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.auth-brand:hover {
+  color: var(--accent);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: var(--shadow);
+}
+
+.auth-card-header h1 {
+  font-size: 1.5rem;
+  margin: 0 0 0.35rem;
+}
+
+.auth-card-header p {
+  margin: 0 0 1.25rem;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.auth-footer-text {
+  margin: 1.25rem 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.auth-footer-text a {
+  color: var(--accent);
+}
+
+.dashboard-grid {
+  margin-top: 0.5rem;
+}
+
+.dashboard-card {
+  border-color: var(--border);
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-border);
+}
+
+.dashboard-card .card-title {
+  color: var(--text-h);
+  font-size: 1.1rem;
+}
+
+.dashboard-card .card-text {
+  color: var(--text);
+  font-size: 0.92rem;
+}
+
+.dashboard-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: var(--accent-bg);
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.data-grid-panel {
+  height: min(70vh, 560px);
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.role-badge {
+  text-transform: capitalize;
+}
+
+html[data-theme="dark"] .theme-navbar .navbar-toggler-icon {
+  filter: invert(1);
+}
+
+.hero-title {
   font-family: var(--heading);
   font-weight: 500;
   color: var(--text-h);
-}
-
-h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
 }
-h2 {
+
+.hero-title h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
-  @media (max-width: 1024px) {
+}
+
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 36px;
+    margin: 20px 0;
+  }
+}
+
+h2 {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+  font-size: 24px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+  margin: 0 0 8px;
+}
+
+@media (max-width: 1024px) {
+  h2 {
     font-size: 20px;
   }
 }
+
+h1 {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+}
+
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+}
+
 p {
   margin: 0;
 }

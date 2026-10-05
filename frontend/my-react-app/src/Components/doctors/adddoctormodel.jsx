@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import api from "../../api";
+import { showSuccess, showError, getApiErrorMessage } from "../../utils/toast.js";
 
 export default function AddDoctorModal({ show, onClose, onSuccess }) {
   const initialDoctor = {
@@ -16,7 +17,7 @@ export default function AddDoctorModal({ show, onClose, onSuccess }) {
     is_active: true,
   };
   const [errors, setErrors] = useState({});
-  const [doctor, setDoctor] = useState({ initialDoctor });
+  const [doctor, setDoctor] = useState(initialDoctor);
 
   const resetForm = () => {
     setDoctor(initialDoctor);
@@ -85,28 +86,16 @@ export default function AddDoctorModal({ show, onClose, onSuccess }) {
     try {
       await api.post("/doctors/create", doctor);
       onSuccess();
-      alert("Doctor added!");
+      showSuccess("Doctor added successfully");
       resetForm();
       onClose();
-      setDoctor({
-        firstname: "",
-        lastname: "",
-        email: "",
-        phone: "",
-        degree: "",
-        specialization: "",
-        address: "",
-        date_of_birth: "",
-        completion_date: "",
-        is_active: true,
-      });
     } catch (err) {
       console.error(err);
+      showError(getApiErrorMessage(err, "Failed to add doctor"));
     }
   };
 
   return (
-    <div className="page-container">
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>Add Doctor</Modal.Title>
@@ -222,6 +211,5 @@ export default function AddDoctorModal({ show, onClose, onSuccess }) {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
   );
 }

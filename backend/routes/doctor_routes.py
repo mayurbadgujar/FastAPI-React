@@ -3,19 +3,27 @@ from typing import Optional
 from schemas.doctor_schema import DoctorCreate, DoctorUpdate
 from services.doctors_service import create_doctor, get_doctor_by_email_or_phone, get_all_doctors, update_doctor, delete_doctor, get_doctor_by_id
 from services.auth_service import get_current_user
+from core.roles import UserRole
+from core.rbac import require_roles
 
 doctors_router = APIRouter()
 
+read_roles = require_roles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT)
+manage_roles = require_roles(UserRole.ADMIN)
+
+
 @doctors_router.post("/create", status_code=201, summary="Create a new doctor")
-async def create(doctor_data: DoctorCreate, current_user=Depends(get_current_user)):
+async def create(doctor_data: DoctorCreate, current_user=Depends(manage_roles)):
     return await create_doctor(doctor_data)
 
+
 @doctors_router.get("/all", summary="Get all doctors")
-async def get_all(current_user=Depends(get_current_user)):
+async def get_all(current_user=Depends(read_roles)):
     return await get_all_doctors()
 
+
 @doctors_router.get("/{doctor_id}", summary="Get doctor by ID")
-async def get_by_id(doctor_id: int, current_user=Depends(get_current_user)):
+async def get_by_id(doctor_id: int, current_user=Depends(read_roles)):
     doctor = await get_doctor_by_id(doctor_id)
     if doctor:
         return doctor
@@ -24,11 +32,12 @@ async def get_by_id(doctor_id: int, current_user=Depends(get_current_user)):
         detail="Doctor id not found"
     )
 
+
 @doctors_router.get("/", summary="Get doctor by email or phone")
 async def get_doctor(
     email: Optional[str] = None,
     phone: Optional[str] = None,
-    current_user=Depends(get_current_user),
+    current_user=Depends(read_roles),
 ):
     if not email and not phone:
         raise HTTPException(
@@ -46,8 +55,9 @@ async def get_doctor(
         detail="Doctor not found with the provided email or phone number"
     )
 
+
 @doctors_router.put("/{doctor_id}", summary="Update doctor information")
-async def update(doctor_id: int, doctor_data: DoctorUpdate, current_user=Depends(get_current_user)):
+async def update(doctor_id: int, doctor_data: DoctorUpdate, current_user=Depends(manage_roles)):
     updated_doctor = await update_doctor(doctor_id, doctor_data)
     if updated_doctor is None:
         raise HTTPException(
@@ -56,8 +66,9 @@ async def update(doctor_id: int, doctor_data: DoctorUpdate, current_user=Depends
         )
     return updated_doctor
 
+
 @doctors_router.delete("/{doctor_id}", summary="Delete a doctor")
-async def delete(doctor_id: int, current_user=Depends(get_current_user)):
+async def delete(doctor_id: int, current_user=Depends(manage_roles)):
     deleted_doctor = await delete_doctor(doctor_id)
     if deleted_doctor is None:
         raise HTTPException(

@@ -6,6 +6,10 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { Button } from "react-bootstrap";
 import AddDoctorModal from "./adddoctormodel.jsx";
 import api from "../../api.jsx";
+import PageHeader from "../../Components/layout/PageHeader.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { useTheme } from "../../context/ThemeContext.jsx";
+import { showSuccess, showError, getApiErrorMessage } from "../../utils/toast.js";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -13,6 +17,9 @@ export default function Doctors() {
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const { permissions } = useAuth();
+  const { isDark } = useTheme();
+  const canEdit = permissions.canManageDoctors;
 
   const defaultColDef = useMemo(
     () => ({
@@ -20,8 +27,9 @@ export default function Doctors() {
       filter: true,
       resizable: true,
       floatingFilter: true,
+      editable: canEdit,
     }),
-    [],
+    [canEdit],
   );
 
   const columnDefs = useMemo(
@@ -30,37 +38,38 @@ export default function Doctors() {
         headerName: "ID",
         field: "id",
         width: 90,
+        editable: false,
       },
       {
         headerName: "Full Name",
-        editable: true,
+        editable: canEdit,
         valueGetter: (params) =>
           `${params.data.firstname ?? ""} ${params.data.lastname ?? ""}`,
       },
       {
         headerName: "Email",
         field: "email",
-        editable: true,
+        editable: canEdit,
       },
       {
         headerName: "Phone",
-        editable: true,
+        editable: canEdit,
         field: "phone",
       },
       {
         headerName: "Address",
-        editable: true,
+        editable: canEdit,
         field: "address",
       },
       {
         headerName: "Specialization",
         field: "specialization",
-        editable: true,
+        editable: canEdit,
       },
       {
         headerName: "Date of birth",
         field: "date_of_birth",
-        editable: true,
+        editable: canEdit,
         cellEditor: "agDateStringCellEditor",
         cellEditorParams: {
           min: "0001-01-01",
@@ -81,6 +90,7 @@ export default function Doctors() {
       },
       {
         headerName: "Experience (Years)",
+        editable: false,
         valueGetter: (params) => {
           if (!params.data.completion_date) {
             return "";
@@ -102,10 +112,10 @@ export default function Doctors() {
       {
         headerName: "Active",
         field: "is_active",
-        editable: true,
+        editable: canEdit,
       },
     ],
-    [],
+    [canEdit],
   );
 
   useEffect(() => {
@@ -129,15 +139,11 @@ export default function Doctors() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="page-container">
-        <h4>Loading doctors...</h4>
-      </div>
-    );
-  }
-
   const onCellValueChanged = async (params) => {
+    if (!canEdit) {
+      return;
+    }
+
     const field = params.colDef.field;
 
     const updatedRow = {
@@ -148,26 +154,41 @@ export default function Doctors() {
     params.api.applyTransaction({ update: [updatedRow] });
     try {
       await api.put(`/doctors/${updatedRow.id}`, updatedRow);
-      alert("Doctor updated successfully");
-    } catch (error) {
-      alert("Failed to update doctor");
+      showSuccess("Doctor updated successfully");
+    } catch (err) {
+      showError(getApiErrorMessage(err, "Failed to update doctor"));
+      loadDoctors();
     }
   };
 
+  if (loading) {
+    return (
+      <div className="page-container">
+        <p className="text-muted">Loading doctors…</p>
+      </div>
+    );
+  }
+
   return (
     <div className="page-container">
-      <div className="d-flex justify-content-end">
-        <Button onClick={() => setShowModal(true)}>
-          <i className="bi bi-plus-circle me-2"></i>
-          Add Doctor
-        </Button>
-      </div>
+      <PageHeader
+        title="Doctors"
+        subtitle={
+          canEdit
+            ? "Manage the full doctor directory."
+            : "Read-only directory of available doctors."
+        }
+        actions={
+          canEdit ? (
+            <Button className="btn-accent" onClick={() => setShowModal(true)}>
+              <i className="bi bi-plus-circle me-2" />
+              Add doctor
+            </Button>
+          ) : null
+        }
+      />
       <div
-        className="ag-theme-quartz"
-        style={{
-          height: "400px",
-          width: "100%",
-        }}
+        className={`ag-theme-quartz${isDark ? "-dark" : ""} data-grid-panel`}
       >
         <AgGridReact
           theme="legacy"
@@ -182,11 +203,13 @@ export default function Doctors() {
           onCellValueChanged={onCellValueChanged}
         />
       </div>
-      <AddDoctorModal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        onSuccess={loadDoctors}
-      />
+      {canEdit && (
+        <AddDoctorModal
+          show={showModal}
+          onClose={() => setShowModal(false)}
+          onSuccess={loadDoctors}
+        />
+      )}
     </div>
   );
 }

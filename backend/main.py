@@ -3,10 +3,12 @@ from fastapi import FastAPI
 from routes.auth_routes import router
 from routes.doctor_routes import doctors_router
 from routes.patient_route import patient_router
-from database.connection import database ,metadata, engine
+from database.connection import database, metadata, engine
+from database.schema_migrations import ensure_user_role_column
 from fastapi.middleware.cors import CORSMiddleware
 
 metadata.create_all(engine)
+ensure_user_role_column()
 
 app = FastAPI()
 

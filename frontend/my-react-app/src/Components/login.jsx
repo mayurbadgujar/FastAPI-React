@@ -1,71 +1,77 @@
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import api from "../api";
+import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { Form, Button, Alert } from "react-bootstrap";
+import AuthLayout from "../Components/layout/AuthLayout.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const token = localStorage.getItem("token");
-  const storedUser = localStorage.getItem("user");
-  const isAuthenticated = token && storedUser;
+  const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = location.state?.from ?? "/";
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={redirectTo} replace />;
   }
 
-  const login = async () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setSubmitting(true);
     try {
-      const response = await api.post("/auth/login", {
-        username,
-        password,
-      });
-
-      const token = response.data.access_token;
-      if (token) {
-        localStorage.setItem("token", token);
-      }
-      if (response.data.user) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-      }
-
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-      const message = error?.response?.data?.detail || "Login failed";
-      alert(message);
+      await login(username, password);
+      navigate(redirectTo, { replace: true });
+    } catch (err) {
+      const message = err?.response?.data?.detail || "Login failed";
+      setError(typeof message === "string" ? message : "Login failed");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="page-container">
-      <div className="container mt-5" style={{ maxWidth: 400 }}>
-        <h3>Login</h3>
-
-        <input
-          className="form-control mb-3"
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-
-        <input
-          className="form-control mb-3"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <button className="btn btn-primary w-100" onClick={login}>
-          Login
-        </button>
-        <Link to="/auth/register" className="btn btn-link w-100 mt-2">
-          Don't have an account? Register
-        </Link>
-      </div>
-    </div>
+    <AuthLayout title="Welcome back" subtitle="Sign in to your Cureveda account">
+      {error && (
+        <Alert variant="danger" className="mb-3">
+          {error}
+        </Alert>
+      )}
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3">
+          <Form.Label>Username</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            autoComplete="username"
+          />
+        </Form.Group>
+        <Form.Group className="mb-4">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Enter password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+          />
+        </Form.Group>
+        <Button type="submit" className="w-100 btn-accent" disabled={submitting}>
+          {submitting ? "Signing in…" : "Sign in"}
+        </Button>
+      </Form>
+      <p className="auth-footer-text">
+        Don&apos;t have an account?{" "}
+        <Link to="/auth/register">Create one</Link>
+      </p>
+    </AuthLayout>
   );
 }

@@ -1,9 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from core.roles import UserRole
+
 
 class UserCreate(BaseModel):
     username: str
     email: str
     password: str
+    role: UserRole = Field(default=UserRole.PATIENT)
 
 class UserLogin(BaseModel):
     username: str
@@ -18,6 +22,7 @@ class User(BaseModel):
     username: str
     email: str
     is_active: bool
+    role: UserRole = UserRole.PATIENT
 
 class LoginResponse(BaseModel):
     access_token: str
@@ -26,3 +31,4 @@ class LoginResponse(BaseModel):
 
 class RegisterResponse(BaseModel):
     message: str
+    role: UserRole
