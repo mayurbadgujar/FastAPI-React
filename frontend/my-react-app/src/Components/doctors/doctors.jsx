@@ -9,7 +9,11 @@ import api from "../../api.jsx";
 import PageHeader from "../../Components/layout/PageHeader.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
-import { showSuccess, showError, getApiErrorMessage } from "../../utils/toast.js";
+import {
+  showSuccess,
+  showError,
+  getApiErrorMessage,
+} from "../../utils/toast.js";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -173,11 +177,7 @@ export default function Doctors() {
     <div className="page-container">
       <PageHeader
         title="Doctors"
-        subtitle={
-          canEdit
-            ? "Manage the full doctor directory."
-            : "Read-only directory of available doctors."
-        }
+        subtitle={canEdit}
         actions={
           canEdit ? (
             <Button className="btn-accent" onClick={() => setShowModal(true)}>

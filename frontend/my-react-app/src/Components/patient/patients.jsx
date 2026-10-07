@@ -7,7 +7,13 @@ import api from "../../api.jsx";
 import PageHeader from "../../Components/layout/PageHeader.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
-import { showSuccess, showError, getApiErrorMessage } from "../../utils/toast.js";
+import {
+  showSuccess,
+  showError,
+  getApiErrorMessage,
+} from "../../utils/toast.js";
+import { Button } from "react-bootstrap";
+import AddPatientModal from "./addpatientmodel.jsx";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -17,7 +23,7 @@ export default function Patients() {
   const { permissions } = useAuth();
   const { isDark } = useTheme();
   const canEdit = permissions.canManagePatients;
-
+  const [showModal, setShowModal] = useState(false);
   const defaultColDef = useMemo(
     () => ({
       sortable: true,
@@ -125,7 +131,18 @@ export default function Patients() {
     <div className="page-container">
       <PageHeader
         title="Patients"
-        subtitle="Clinical staff can review and update patient records."
+        subtitle={canEdit}
+        actions={
+          canEdit ? (
+            <Button
+              className="btn btn-primary"
+              onClick={() => setShowModal(true)}
+            >
+              <i className="bi bi-plus-circle me-2" />
+              Add Patient
+            </Button>
+          ) : null
+        }
       />
       <div
         className={`ag-theme-quartz${isDark ? "-dark" : ""} data-grid-panel`}
@@ -143,6 +160,13 @@ export default function Patients() {
           onCellValueChanged={onCellValueChanged}
         />
       </div>
+      {canEdit && (
+        <AddPatientModal
+          show={showModal}
+          onClose={() => setShowModal(false)}
+          onSuccess={loadPatients}
+        />
+      )}
     </div>
   );
 }

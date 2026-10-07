@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import api from "../../api";
-import { showSuccess, showError, getApiErrorMessage } from "../../utils/toast.js";
+import {
+  showSuccess,
+  showError,
+  getApiErrorMessage,
+} from "../../utils/toast.js";
 
 export default function AddDoctorModal({ show, onClose, onSuccess }) {
   const initialDoctor = {
@@ -79,9 +83,15 @@ export default function AddDoctorModal({ show, onClose, onSuccess }) {
       ...doctor,
       [name]: type === "checkbox" ? checked : value,
     });
+    setErrors((currentErrors) => {
+      const nextErrors = { ...currentErrors };
+      delete nextErrors[name];
+      return nextErrors;
+    });
   };
 
-  const saveDoctor = async () => {
+  const saveDoctor = async (event) => {
+    event.preventDefault();
     if (!validate()) return;
     try {
       await api.post("/doctors/create", doctor);
@@ -96,109 +106,150 @@ export default function AddDoctorModal({ show, onClose, onSuccess }) {
   };
 
   return (
-      <Modal show={show} onHide={handleClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Add Doctor</Modal.Title>
-        </Modal.Header>
-
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Add Doctor</Modal.Title>
+      </Modal.Header>
+      <Form noValidate onSubmit={saveDoctor}>
         <Modal.Body>
-          <Form>
-            <Form.Group className="mb-2">
-              <Form.Label>First Name</Form.Label>
-              <Form.Control
-                name="firstname"
-                value={doctor.firstname || ""}
-                onChange={handleChange}
-                isInvalid={!!errors.firstname}
-              />
-              <Form.Control.Feedback type="invalid">
-                {!errors.firstname}
-              </Form.Control.Feedback>
-            </Form.Group>
-
-            <Form.Group className="mb-2">
-              <Form.Label>Last Name</Form.Label>
-              <Form.Control
-                name="lastname"
-                value={doctor.lastname}
-                onChange={handleChange}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-2">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={doctor.email}
-                onChange={handleChange}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-2">
-              <Form.Label>Phone</Form.Label>
-              <Form.Control
-                name="phone"
-                value={doctor.phone}
-                onChange={handleChange}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-2">
-              <Form.Label>Degree</Form.Label>
-              <Form.Control
-                name="degree"
-                value={doctor.degree}
-                onChange={handleChange}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-2">
-              <Form.Label>Specialization</Form.Label>
-              <Form.Control
-                name="specialization"
-                value={doctor.specialization}
-                onChange={handleChange}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-2">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                name="address"
-                value={doctor.address}
-                onChange={handleChange}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-2">
-              <Form.Label>Date of Birth</Form.Label>
-              <Form.Control
-                type="date"
-                name="date_of_birth"
-                value={doctor.date_of_birth}
-                onChange={handleChange}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-2">
-              <Form.Label>Completion Date</Form.Label>
-              <Form.Control
-                type="date"
-                name="completion_date"
-                value={doctor.completion_date}
-                onChange={handleChange}
-              />
-            </Form.Group>
-
-            <Form.Check
-              type="checkbox"
-              label="Active"
-              name="is_active"
-              checked={doctor.is_active}
+          <Form.Group className="mb-2">
+            <Form.Label>First Name</Form.Label>
+            <Form.Control
+              name="firstname"
+              value={doctor.firstname || ""}
               onChange={handleChange}
+              required
+              isInvalid={!!errors.firstname}
             />
-          </Form>
+            <Form.Control.Feedback type="invalid">
+              {errors.firstname}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-2">
+            <Form.Label>Last Name</Form.Label>
+            <Form.Control
+              name="lastname"
+              value={doctor.lastname}
+              onChange={handleChange}
+              required
+              isInvalid={!!errors.lastname}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.lastname}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-2">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
+              name="email"
+              value={doctor.email}
+              onChange={handleChange}
+              required
+              isInvalid={!!errors.email}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.email}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-2">
+            <Form.Label>Phone</Form.Label>
+            <Form.Control
+              name="phone"
+              value={doctor.phone}
+              onChange={handleChange}
+              type="tel"
+              maxLength={10}
+              required
+              isInvalid={!!errors.phone}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.phone}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-2">
+            <Form.Label>Degree</Form.Label>
+            <Form.Control
+              name="degree"
+              value={doctor.degree}
+              onChange={handleChange}
+              required
+              isInvalid={!!errors.degree}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.degree}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-2">
+            <Form.Label>Specialization</Form.Label>
+            <Form.Control
+              name="specialization"
+              value={doctor.specialization}
+              onChange={handleChange}
+              required
+              isInvalid={!!errors.specialization}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.specialization}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-2">
+            <Form.Label>Address</Form.Label>
+            <Form.Control
+              name="address"
+              value={doctor.address}
+              onChange={handleChange}
+              required
+              isInvalid={!!errors.address}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.address}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-2">
+            <Form.Label>Date of Birth</Form.Label>
+            <Form.Control
+              type="date"
+              name="date_of_birth"
+              value={doctor.date_of_birth}
+              onChange={handleChange}
+              required
+              isInvalid={!!errors.date_of_birth}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.date_of_birth}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-2">
+            <Form.Label>Completion Date</Form.Label>
+            <Form.Control
+              type="date"
+              name="completion_date"
+              value={doctor.completion_date}
+              onChange={handleChange}
+              required
+              isInvalid={!!errors.completion_date}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.completion_date}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Check
+            type="checkbox"
+            label="Active"
+            name="is_active"
+            checked={doctor.is_active}
+            onChange={handleChange}
+          />
         </Modal.Body>
 
         <Modal.Footer>
@@ -206,10 +257,11 @@ export default function AddDoctorModal({ show, onClose, onSuccess }) {
             Cancel
           </Button>
 
-          <Button variant="primary" onClick={saveDoctor}>
+          <Button variant="primary" type="submit">
             Save
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Form>
+    </Modal>
   );
 }
