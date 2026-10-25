@@ -39,6 +39,9 @@ export default function NavigationBar() {
                 Doctors
               </Nav.Link>
             )}
+            <Nav.Link as={NavLink} to="/appointments">
+              Appointments
+            </Nav.Link>
             <Nav.Link as={NavLink} to="/about">
               About
             </Nav.Link>

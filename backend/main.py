@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from routes.auth_routes import router
 from routes.doctor_routes import doctors_router
 from routes.patient_route import patient_router
+from routes.appointment_routes import appointment_router
 from database.connection import database, metadata, engine
 from database.schema_migrations import ensure_user_role_column
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,6 +27,7 @@ async def shutdown():
 app.include_router(router,prefix="/auth", tags=["auth"])
 app.include_router(doctors_router,prefix="/doctors", tags=["doctors"])
 app.include_router(patient_router,prefix='/patient', tags=["patient"])
+app.include_router(appointment_router, prefix="/appointments", tags=["appointments"])
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

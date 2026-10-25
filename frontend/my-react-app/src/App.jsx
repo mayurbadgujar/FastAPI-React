@@ -8,6 +8,7 @@ import MainLayout from "./Components/layout/MainLayout.jsx";
 import ProtectedRoute from "./Components/layout/ProtectedRoute.jsx";
 import About from "./Components/about.jsx";
 import Contact from "./Components/contact.jsx";
+import Appointments from "./Components/appointments/appointments.jsx";
 import { ROLES } from "./constants/roles.js";
 
 function App() {
@@ -37,6 +38,14 @@ function App() {
           element={
             <ProtectedRoute roles={[ROLES.ADMIN, ROLES.DOCTOR]}>
               <Patients />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/appointments"
+          element={
+            <ProtectedRoute roles={[ROLES.ADMIN, ROLES.DOCTOR, ROLES.PATIENT]}>
+              <Appointments />
             </ProtectedRoute>
           }
         />
